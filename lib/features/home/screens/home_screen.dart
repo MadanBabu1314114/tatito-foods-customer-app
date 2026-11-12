@@ -189,7 +189,7 @@ class HomeScreen extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
                     itemCount: catalog.banners.length,
-                    separatorBuilder: (_, _) => const SizedBox(width: 12),
+                    separatorBuilder: (context, index) => const SizedBox(width: 12),
                     itemBuilder: (context, index) => _BannerCard(
                       banner: catalog.banners[index],
                       index: index,
@@ -217,7 +217,7 @@ class HomeScreen extends StatelessWidget {
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
                           itemCount: catalog.categories.length,
-                          separatorBuilder: (_, _) =>
+                          separatorBuilder: (context, index) =>
                               const SizedBox(width: 12),
                           itemBuilder: (context, index) {
                             return _CategoryCircle(

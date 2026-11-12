@@ -293,7 +293,7 @@ class _ProductImage extends StatelessWidget {
           : Image.network(
               photo,
               fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => const Center(
+              errorBuilder: (context, error, stackTrace) => const Center(
                 child: Icon(
                   Icons.shopping_basket_outlined,
                   size: 84,
