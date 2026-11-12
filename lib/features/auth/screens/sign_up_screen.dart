@@ -45,6 +45,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       setState(() => _error = 'Enter a valid email address.');
       return;
     }
+    if (!RegExp(r'^[6-9]\d{9}$').hasMatch(phone)) {
+      setState(() => _error = 'Enter a valid 10-digit mobile number.');
+      return;
+    }
     if (password.length < 8) {
       setState(() => _error = 'Password must be at least 8 characters.');
       return;
@@ -117,9 +121,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
           TextField(
             controller: _phoneController,
             keyboardType: TextInputType.phone,
+            maxLength: 10,
             decoration: const InputDecoration(
-              labelText: 'Phone',
+              labelText: '10-digit mobile number',
               prefixIcon: Icon(Icons.phone_outlined),
+              counterText: '',
             ),
           ),
           const SizedBox(height: 14),

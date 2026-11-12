@@ -27,7 +27,7 @@ class CheckoutScreen extends StatefulWidget {
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   final _couponController = TextEditingController();
-  String? _selectedAddressId;
+  int? _selectedAddressId;
   String? _selectedSlotId;
   Coupon? _coupon;
   String? _couponMessage;
@@ -410,6 +410,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     if (!userSignedIn) return 'Sign in to place an order.';
     if (cartItems == 0) return 'Your basket has no available items.';
     if (address == null) return 'Add a delivery address.';
+    if (!address.hasContact) {
+      return 'Add the receiver name and mobile number to this address.';
+    }
     if (zone == null) return 'Delivery is not available at this pincode.';
     if (slot == null) return 'Choose a delivery slot.';
     if (subtotal < zone.minimumOrder) {

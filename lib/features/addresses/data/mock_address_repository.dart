@@ -22,8 +22,10 @@ class MockAddressRepository {
   List<Address> seededAddresses() {
     return const [
       Address(
-        id: 'address-demo-home',
+        id: 1,
         label: AddressLabel.home,
+        name: 'Demo Customer',
+        phone: '9876543210',
         line1: 'Flat 402, Green Meadows',
         line2: 'Madhapur',
         city: 'Hyderabad',

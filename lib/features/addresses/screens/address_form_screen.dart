@@ -15,6 +15,8 @@ class AddressFormScreen extends StatefulWidget {
 }
 
 class _AddressFormScreenState extends State<AddressFormScreen> {
+  late final TextEditingController _name;
+  late final TextEditingController _phone;
   late final TextEditingController _line1;
   late final TextEditingController _line2;
   late final TextEditingController _city;
@@ -28,6 +30,8 @@ class _AddressFormScreenState extends State<AddressFormScreen> {
   void initState() {
     super.initState();
     final address = widget.address;
+    _name = TextEditingController(text: address?.name ?? '');
+    _phone = TextEditingController(text: address?.phone ?? '');
     _line1 = TextEditingController(text: address?.line1 ?? '');
     _line2 = TextEditingController(text: address?.line2 ?? '');
     _city = TextEditingController(text: address?.city ?? 'Hyderabad');
@@ -39,6 +43,8 @@ class _AddressFormScreenState extends State<AddressFormScreen> {
 
   @override
   void dispose() {
+    _name.dispose();
+    _phone.dispose();
     _line1.dispose();
     _line2.dispose();
     _city.dispose();
@@ -48,8 +54,18 @@ class _AddressFormScreenState extends State<AddressFormScreen> {
   }
 
   Future<void> _save() async {
+    final name = _name.text.trim();
+    final phone = _phone.text.trim();
     final line1 = _line1.text.trim();
     final pincode = _pincode.text.trim();
+    if (name.isEmpty) {
+      setState(() => _error = 'Enter the receiver name.');
+      return;
+    }
+    if (!RegExp(r'^[6-9]\d{9}$').hasMatch(phone)) {
+      setState(() => _error = 'Enter a valid 10-digit mobile number.');
+      return;
+    }
     if (line1.isEmpty || _city.text.trim().isEmpty) {
       setState(() => _error = 'Address line 1 and city are required.');
       return;
@@ -61,8 +77,11 @@ class _AddressFormScreenState extends State<AddressFormScreen> {
 
     final provider = context.read<AddressProvider>();
     final address = Address(
-      id: widget.address?.id ?? '',
+      // 0 for a new address; AddressProvider.add assigns the id.
+      id: widget.address?.id ?? 0,
       label: _label,
+      name: name,
+      phone: phone,
       line1: line1,
       line2: _line2.text.trim(),
       city: _city.text.trim(),
@@ -106,6 +125,26 @@ class _AddressFormScreenState extends State<AddressFormScreen> {
             onChanged: (value) {
               if (value != null) setState(() => _label = value);
             },
+          ),
+          const SizedBox(height: 14),
+          TextField(
+            controller: _name,
+            textCapitalization: TextCapitalization.words,
+            decoration: const InputDecoration(
+              labelText: 'Receiver name',
+              prefixIcon: Icon(Icons.person_outline),
+            ),
+          ),
+          const SizedBox(height: 14),
+          TextField(
+            controller: _phone,
+            keyboardType: TextInputType.phone,
+            maxLength: 10,
+            decoration: const InputDecoration(
+              labelText: '10-digit mobile number',
+              prefixIcon: Icon(Icons.phone_outlined),
+              counterText: '',
+            ),
           ),
           const SizedBox(height: 14),
           TextField(

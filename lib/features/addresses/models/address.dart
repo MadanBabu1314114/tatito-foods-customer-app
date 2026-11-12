@@ -24,10 +24,21 @@ extension AddressLabelText on AddressLabel {
   }
 }
 
+/// Reads an id that may be stored as an int (API / current format) or as a
+/// numeric string. Returns null for legacy non-numeric ids such as
+/// 'address-demo-home', so the caller can assign a fresh id.
+int? _parseId(Object? value) {
+  if (value is int) return value;
+  if (value is String) return int.tryParse(value);
+  return null;
+}
+
 class Address {
   const Address({
     required this.id,
     required this.label,
+    required this.name,
+    required this.phone,
     required this.line1,
     required this.line2,
     required this.city,
@@ -36,8 +47,14 @@ class Address {
     this.isDefault = false,
   });
 
-  final String id;
+  /// Server id once the API exists. Locally created addresses use a negative
+  /// temporary id until they are saved to the server. 0 means "not assigned".
+  final int id;
   final AddressLabel label;
+
+  /// Receiver name and 10-digit Indian mobile number (`^[6-9]\d{9}$`).
+  final String name;
+  final String phone;
   final String line1;
   final String line2;
   final String city;
@@ -52,9 +69,14 @@ class Address {
     return parts;
   }
 
+  /// True when the fields the API requires for delivery are present.
+  bool get hasContact => name.trim().isNotEmpty && phone.trim().isNotEmpty;
+
   Address copyWith({
-    String? id,
+    int? id,
     AddressLabel? label,
+    String? name,
+    String? phone,
     String? line1,
     String? line2,
     String? city,
@@ -65,6 +87,8 @@ class Address {
     return Address(
       id: id ?? this.id,
       label: label ?? this.label,
+      name: name ?? this.name,
+      phone: phone ?? this.phone,
       line1: line1 ?? this.line1,
       line2: line2 ?? this.line2,
       city: city ?? this.city,
@@ -76,8 +100,10 @@ class Address {
 
   factory Address.fromJson(Map<String, dynamic> json) {
     return Address(
-      id: json['id'] as String? ?? '',
+      id: _parseId(json['id']) ?? 0,
       label: AddressLabelText.fromStorage(json['label'] as String? ?? 'home'),
+      name: json['name'] as String? ?? '',
+      phone: json['phone'] as String? ?? '',
       line1: json['line1'] as String? ?? '',
       line2: json['line2'] as String? ?? '',
       city: json['city'] as String? ?? '',
@@ -91,6 +117,8 @@ class Address {
     return {
       'id': id,
       'label': label.name,
+      'name': name,
+      'phone': phone,
       'line1': line1,
       'line2': line2,
       'city': city,

@@ -87,7 +87,17 @@ class AddressListScreen extends StatelessWidget {
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 4),
-                      child: Text(address.singleLine),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${address.name} · ${address.phone}',
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(address.singleLine),
+                        ],
+                      ),
                     ),
                     isThreeLine: true,
                     trailing: PopupMenuButton<String>(
